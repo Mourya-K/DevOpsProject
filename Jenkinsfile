@@ -1,9 +1,8 @@
-withEnv(["PATH+DOCKER=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"]) {
-    // Your pipeline stages here
-    pipeline {
+pipeline {
     agent any
 
     environment {
+        PATH = "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
         QUOTES_IMAGE = 'quotes_service'
         API_IMAGE = 'api_gateway'
         FRONTEND_IMAGE = 'frontend_application'
@@ -22,7 +21,7 @@ withEnv(["PATH+DOCKER=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"]) {
                 script {
                     dir('QuoteService') {
                         // Build Docker image for QuoteService
-                        sh 'docker build -t $QUOTES_IMAGE -f app.dockerfile .'
+                        sh 'docker build -t "${QUOTES_IMAGE}" -f app.dockerfile .'
                     }
                 }
             }
@@ -33,7 +32,7 @@ withEnv(["PATH+DOCKER=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"]) {
                 script {
                     dir('ApiGateway') {
                         // Build Docker image for ApiGateway
-                        sh 'docker build -t $API_IMAGE -f app.dockerfile .'
+                        sh 'docker build -t "${API_IMAGE}" -f app.dockerfile .'
                     }
                 }
             }
@@ -44,7 +43,7 @@ withEnv(["PATH+DOCKER=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"]) {
                 script {
                     dir('FrontendApplication') {
                         // Build Docker image for FrontendApplication
-                        sh 'docker build -t $FRONTEND_IMAGE -f app.dockerfile .'
+                        sh 'docker build -t "${FRONTEND_IMAGE}" -f app.dockerfile .'
                     }
                 }
             }
@@ -60,22 +59,19 @@ withEnv(["PATH+DOCKER=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"]) {
         }
     }
 
-    post {
-        always {
-            script {
-                // Clean up Docker containers and images after pipeline completes
-                sh 'docker-compose down'
-                sh 'docker rmi -f $QUOTES_IMAGE $API_IMAGE $FRONTEND_IMAGE || true'
-            }
-        }
-        success {
-            echo 'Pipeline completed successfully!'
-        }
-        failure {
-            echo 'Pipeline failed. Check logs for errors.'
-        }
-    }
+    // post {
+    //     always {
+    //         script {
+    //             // Clean up Docker containers and images after pipeline completes
+    //             sh 'docker-compose down'
+    //             sh 'docker rmi -f "${QUOTES_IMAGE}" "${API_IMAGE}" "${FRONTEND_IMAGE}" || true'
+    //         }
+    //     }
+    //     success {
+    //         echo 'Pipeline completed successfully!'
+    //     }
+    //     failure {
+    //         echo 'Pipeline failed. Check logs for errors.'
+    //     }
+    // }
 }
-}
-
-
