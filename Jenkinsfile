@@ -1,4 +1,6 @@
-pipeline {
+withEnv(["PATH+DOCKER=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"]) {
+    // Your pipeline stages here
+    pipeline {
     agent any
 
     environment {
@@ -74,3 +76,6 @@ pipeline {
         }
     }
 }
+}
+
+
